@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Language Survey</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f5f6fa;
+      color: #1a1a2e;
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .survey-wrap {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .survey-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .survey-header h1 {
+      font-size: 26px;
+      font-weight: 600;
+      color: #1a1a2e;
+      margin-bottom: 8px;
+    }
+
+    .survey-header p {
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .progress-bar-wrap {
+      background: #fff;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+
+    .progress-track {
+      height: 6px;
+      background: #e5e7eb;
+      border-radius: 3px;
+    }
+
+    .progress-fill {
+      height: 6px;
+      background: #2563eb;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .section-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      display: none;
+    }
+
+    .section-card.active { display: block; }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #1d4ed8;
+      background: #dbeafe;
+      padding: 3px 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    .section-card h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a2e;
+      margin-bottom: 6px;
+    }
+
+    .section-desc {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .question { margin-bottom: 1.5rem; }
+
+    .question > label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .req { color: #ef4444; margin-left: 2px; }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 14px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      background: #fafafa;
+      color: #1a1a2e;
+      font-family: inherit;
+      transition: border-color 0.2s;
+      resize: vertical;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      background: #fff;
+    }
+
+    textarea { min-height: 90px; }
+
+    .radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .radio-opt input { display: none; }
+
+    .radio-opt span {
+      display: block;
+      padding: 8px 16px;
+      font-size: 13px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 24px;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: #fafafa;
+      user-select: none;
+    }
+
+    .radio-opt input:checked + span {
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-color: #2563eb;
+      font-weight: 600;
+    }
+
+    .radio-opt span:hover { border-color: #93c5fd; background: #f0f7ff; }
+
+    .lang-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .scale-mini { display: flex; gap: 8px; align-items: center; }
+
+    .scale-mini label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    .scale-mini input[type="radio"] { display: none; }
+
+    .scale-mini .dot {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1.5px solid #d1d5db;
+      background: #fafafa;
+      transition: all 0.15s;
+    }
+
+    .scale-mini input:checked + .dot {
+      background: #2563eb;
+      border-color: #2563eb;
+    }
+
+    .setting-grid {
+      display: grid;
+      gap: 8px;
+    }
+
+    .setting-row {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .setting-row label {
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .subsection-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #374151;
+      margin: 1.25rem 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .likert-block {
+      border: 1.5px solid #f3f4f6;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+
+    .likert-header {
+      display: grid;
+      grid-template-columns: 1fr repeat(5, 52px);
+      background: #f9fafb;
+      padding: 10px 14px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .likert-header span {
+      font-size: 11px;
+      color: #9ca3af;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .likert-header span:first-child { text-align: left; }
+
+    .likert-row {
+      display: grid;
+      grid-template-columns: 1fr repeat(5, 52px);
+      padding: 12px 14px;
+      align-items: center;
+      border-top: 1px solid #f9fafb;
+    }
+
+    .likert-row:nth-child(even) { background: #fafbff; }
+
+    .likert-row p {
+      font-size: 13px;
+      color: #374151;
+      line-height: 1.5;
+      padding-right: 10px;
+    }
+
+    .dot-wrap { display: flex; justify-content: center; }
+
+    .likert-row input[type="radio"] { display: none; }
+
+    .rdot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid #d1d5db;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: #fff;
+      display: block;
+    }
+
+    .likert-row input:checked + .rdot {
+      background: #2563eb;
+      border-color: #2563eb;
+    }
+
+    .nav-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 2rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid #f3f4f6;
+    }
+
+    .btn {
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      border: 1.5px solid #e5e7eb;
+      background: #fff;
+      color: #374151;
+      transition: all 0.15s;
+    }
+
+    .btn:hover { background: #f9fafb; border-color: #d1d5db; }
+
+    .btn-primary {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: #1d4ed8; border-color: #1d4ed8; }
+
+    .thank-you {
+      background: #fff;
+      border-radius: 16px;
+      padding: 3rem 2rem;
+      text-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+      display: none;
+    }
+
+    .check-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #dcfce7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+    }
+
+    .thank-you h2 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .thank-you p {
+      font-size: 14px;
+      color: #6b7280;
+      line-height: 1.7;
+      max-width: 400px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .summary-box {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: left;
+      font-size: 13px;
+      color: #6b7280;
+      line-height: 2;
+      margin-top: 1rem;
+    }
+
+    @media (max-width: 520px) {
+      .likert-header { grid-template-columns: 1fr repeat(5, 36px); padding: 8px; }
+      .likert-row { grid-template-columns: 1fr repeat(5, 36px); padding: 10px 8px; }
+      .setting-row { grid-template-columns: 1fr; }
+      .lang-row { grid-template-columns: 1fr; }
+      .scale-mini { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Hidden Netlify form to capture all survey data -->
+<form name="language-survey" method="POST" data-netlify="true" id="netlify-form" style="display:none">
+  <input type="hidden" name="form-name" value="language-survey">
+  <input type="hidden" name="age" id="nf-age">
+  <input type="hidden" name="gender" id="nf-gender">
+  <input type="hidden" name="nationality" id="nf-nationality">
+  <input type="hidden" name="language-1" id="nf-lang0">
+  <input type="hidden" name="proficiency-1" id="nf-prof0">
+  <input type="hidden" name="language-2" id="nf-lang1">
+  <input type="hidden" name="proficiency-2" id="nf-prof1">
+  <input type="hidden" name="language-3" id="nf-lang2">
+  <input type="hidden" name="proficiency-3" id="nf-prof2">
+  <input type="hidden" name="setting-home" id="nf-home">
+  <input type="hidden" name="setting-university" id="nf-university">
+  <input type="hidden" name="setting-friends" id="nf-friends">
+  <input type="hidden" name="setting-online" id="nf-online">
+  <!-- Likert scores -->
+  <input type="hidden" name="attitudes-native-language" id="nf-lka">
+  <input type="hidden" name="attitudes-other-languages" id="nf-lkb">
+  <input type="hidden" name="language-prestige" id="nf-lkc">
+  <input type="hidden" name="personal-identity" id="nf-lkd">
+  <input type="hidden" name="social-identity" id="nf-lke">
+  <!-- Open-ended -->
+  <input type="hidden" name="open-q1" id="nf-oq1">
+  <input type="hidden" name="open-q2" id="nf-oq2">
+  <input type="hidden" name="open-q3" id="nf-oq3">
+  <input type="hidden" name="open-q4" id="nf-oq4">
+  <button type="submit" id="nf-submit-btn">Submit</button>
+</form>
+
+<div class="survey-wrap">
+  <div class="survey-header">
+    <h1>Language survey</h1>
+    <p>~10–15 minutes &nbsp;·&nbsp; Anonymous</p>
+  </div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span id="prog-label">Section 1 of 4</span>
+      <span id="prog-pct">25%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="prog-fill" style="width:25%"></div>
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section-card active" id="sec-1">
+    <div class="section-tag">Section 1</div>
+    <h2>Demographic information</h2>
+    <p class="section-desc">Basic background information about you. All responses are anonymous.</p>
+
+    <div class="question">
+      <label>Age <span class="req">*</span></label>
+      <div class="radio-group">
+        <label class="radio-opt"><input type="radio" name="age" value="18–24"><span>18–24</span></label>
+        <label class="radio-opt"><input type="radio" name="age" value="25–34"><span>25–34</span></label>
+        <label class="radio-opt"><input type="radio" name="age" value="35–44"><span>35–44</span></label>
+        <label class="radio-opt"><input type="radio" name="age" value="45+"><span>45+</span></label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label>Gender</label>
+      <div class="radio-group">
+        <label class="radio-opt"><input type="radio" name="gender" value="Male"><span>Male</span></label>
+        <label class="radio-opt"><input type="radio" name="gender" value="Female"><span>Female</span></label>
+        <label class="radio-opt"><input type="radio" name="gender" value="Non-binary"><span>Non-binary</span></label>
+        <label class="radio-opt"><input type="radio" name="gender" value="Prefer not to say"><span>Prefer not to say</span></label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label>Nationality / ethnic background</label>
+      <input type="text" placeholder="e.g. Kazakh, Russian, Korean...">
+    </div>
+
+    <div class="question">
+      <label>Languages you speak <span class="req">*</span> <span style="font-weight:400;color:#9ca3af">(rate proficiency 1–5)</span></label>
+      <div class="lang-row">
+        <input type="text" placeholder="Language (e.g. Kazakh)" class="lang-name">
+        <div class="scale-mini">
+          <label><input type="radio" name="prof0" value="1"><span class="dot"></span>1</label>
+          <label><input type="radio" name="prof0" value="2"><span class="dot"></span>2</label>
+          <label><input type="radio" name="prof0" value="3"><span class="dot"></span>3</label>
+          <label><input type="radio" name="prof0" value="4"><span class="dot"></span>4</label>
+          <label><input type="radio" name="prof0" value="5"><span class="dot"></span>5</label>
+        </div>
+      </div>
+      <div class="lang-row">
+        <input type="text" placeholder="Language (e.g. Russian)" class="lang-name">
+        <div class="scale-mini">
+          <label><input type="radio" name="prof1" value="1"><span class="dot"></span>1</label>
+          <label><input type="radio" name="prof1" value="2"><span class="dot"></span>2</label>
+          <label><input type="radio" name="prof1" value="3"><span class="dot"></span>3</label>
+          <label><input type="radio" name="prof1" value="4"><span class="dot"></span>4</label>
+          <label><input type="radio" name="prof1" value="5"><span class="dot"></span>5</label>
+        </div>
+      </div>
+      <div class="lang-row">
+        <input type="text" placeholder="Language (e.g. English)" class="lang-name">
+        <div class="scale-mini">
+          <label><input type="radio" name="prof2" value="1"><span class="dot"></span>1</label>
+          <label><input type="radio" name="prof2" value="2"><span class="dot"></span>2</label>
+          <label><input type="radio" name="prof2" value="3"><span class="dot"></span>3</label>
+          <label><input type="radio" name="prof2" value="4"><span class="dot"></span>4</label>
+          <label><input type="radio" name="prof2" value="5"><span class="dot"></span>5</label>
+        </div>
+      </div>
+      <p style="font-size:12px;color:#9ca3af;margin-top:6px;">1 = Beginner &nbsp;·&nbsp; 5 = Native/Fluent</p>
+    </div>
+
+    <div class="question">
+      <label>Language used most often in each setting</label>
+      <div class="setting-grid">
+        <div class="setting-row"><label>At home</label><input type="text" placeholder="e.g. Kazakh"></div>
+        <div class="setting-row"><label>At university</label><input type="text" placeholder="e.g. Russian, English"></div>
+        <div class="setting-row"><label>With friends</label><input type="text" placeholder=""></div>
+        <div class="setting-row"><label>Online / social media</label><input type="text" placeholder=""></div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <span></span>
+      <button class="btn btn-primary" onclick="goTo(2)">Next →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section-card" id="sec-2">
+    <div class="section-tag">Section 2</div>
+    <h2>Language attitudes</h2>
+    <p class="section-desc">Rate your agreement with each statement.&nbsp; <strong>1</strong> = Strongly disagree &nbsp;·&nbsp; <strong>5</strong> = Strongly agree</p>
+
+    <div class="subsection-label">Part A — attitudes toward your native / heritage language</div>
+    <div class="likert-block">
+      <div class="likert-header"><span>Statement</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+      <div id="likert-a"></div>
+    </div>
+
+    <div class="subsection-label">Part B — attitudes toward other languages you speak</div>
+    <div class="likert-block">
+      <div class="likert-header"><span>Statement</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+      <div id="likert-b"></div>
+    </div>
+
+    <div class="subsection-label">Part C — language prestige & social perceptions</div>
+    <div class="likert-block">
+      <div class="likert-header"><span>Statement</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+      <div id="likert-c"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="goTo(1)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(3)">Next →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section-card" id="sec-3">
+    <div class="section-tag">Section 3</div>
+    <h2>Language and identity</h2>
+    <p class="section-desc">Rate your agreement with each statement.&nbsp; <strong>1</strong> = Strongly disagree &nbsp;·&nbsp; <strong>5</strong> = Strongly agree</p>
+
+    <div class="subsection-label">Part A — personal identity</div>
+    <div class="likert-block">
+      <div class="likert-header"><span>Statement</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+      <div id="likert-d"></div>
+    </div>
+
+    <div class="subsection-label">Part B — social and group identity</div>
+    <div class="likert-block">
+      <div class="likert-header"><span>Statement</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span></div>
+      <div id="likert-e"></div>
+    </div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="goTo(2)">← Back</button>
+      <button class="btn btn-primary" onclick="goTo(4)">Next →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section-card" id="sec-4">
+    <div class="section-tag">Section 4</div>
+    <h2>Open-ended questions</h2>
+    <p class="section-desc">Please share your personal experiences and reflections. There are no right or wrong answers.</p>
+
+    <div class="question"><label>1. How would you describe your overall relationship with the languages you speak?</label><textarea placeholder="Write your response here..."></textarea></div>
+    <div class="question"><label>2. Have you ever felt judged or excluded based on the language you were speaking? Please describe.</label><textarea placeholder="Write your response here..."></textarea></div>
+    <div class="question"><label>3. Has speaking multiple languages strengthened, complicated, or changed your sense of cultural identity? Please explain.</label><textarea placeholder="Write your response here..."></textarea></div>
+    <div class="question"><label>4. Is there anything else about language and identity you'd like to share? <span style="font-weight:400;color:#9ca3af">(optional)</span></label><textarea placeholder="Optional..."></textarea></div>
+
+    <div class="nav-row">
+      <button class="btn" onclick="goTo(3)">← Back</button>
+      <button class="btn btn-primary" onclick="submitSurvey()">Submit survey ✓</button>
+    </div>
+  </div>
+
+  <!-- THANK YOU -->
+  <div class="thank-you" id="thank-you">
+    <div class="check-circle">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+        <path d="M5 13l4 4L19 7" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2>Thank you for participating!</h2>
+    <p>Your response has been recorded. This research explores how multilingual individuals relate language to their cultural identity — your input is genuinely valuable.</p>
+    <div class="summary-box" id="summary-box"></div>
+  </div>
+</div>
+
+<script>
+  const likertSets = {
+    a: [
+      "I feel proud when I speak my native/heritage language.",
+      "My native language is important to my sense of who I am.",
+      "I think it is important to maintain and pass on my native language.",
+      "My native language sounds more warm and expressive than other languages.",
+      "I feel comfortable speaking my native language in public."
+    ],
+    b: [
+      "Learning additional languages has enriched my life.",
+      "Speaking another language gives me more opportunities.",
+      "I feel more professional when using certain languages.",
+      "Some languages I speak feel more modern or prestigious than others.",
+      "I enjoy switching between languages depending on the situation."
+    ],
+    c: [
+      "People in my community respect speakers of my native language.",
+      "Some languages have higher social status than others in my society.",
+      "I have felt pressure to speak a particular language to be accepted.",
+      "Language choice affects how people are judged by others.",
+      "The global dominance of certain languages (e.g. English) worries me."
+    ],
+    d: [
+      "Speaking my native language makes me feel connected to my culture.",
+      "I feel like a different person when I switch between languages.",
+      "My language(s) are an essential part of who I am.",
+      "When I cannot speak my native language, I feel a sense of loss.",
+      "I feel proud to be multilingual."
+    ],
+    e: [
+      "Speaking a shared language strengthens bonds within a group.",
+      "I feel closer to people who share my native language.",
+      "My language has defined how others see me in social situations.",
+      "Language is the most important marker of my cultural identity.",
+      "I belong to more than one cultural group because of my languages."
+    ]
+  };
+
+  function buildLikert(containerId, setKey) {
+    const c = document.getElementById(containerId);
+    likertSets[setKey].forEach((q, i) => {
+      const row = document.createElement('div');
+      row.className = 'likert-row';
+      let html = `<p>${q}</p>`;
+      for (let v = 1; v <= 5; v++) {
+        const name = `lk_${setKey}_${i}`;
+        html += `<div class="dot-wrap"><input type="radio" name="${name}" id="${name}_${v}" value="${v}"><label for="${name}_${v}" class="rdot"></label></div>`;
+      }
+      row.innerHTML = html;
+      c.appendChild(row);
+    });
+  }
+
+  ['a','b','c','d','e'].forEach(k => buildLikert('likert-' + k, k));
+
+  function goTo(n) {
+    document.querySelectorAll('.section-card').forEach(s => s.classList.remove('active'));
+    document.getElementById('sec-' + n).classList.add('active');
+    const pcts = ["25%", "50%", "75%", "100%"];
+    document.getElementById('prog-label').textContent = `Section ${n} of 4`;
+    document.getElementById('prog-pct').textContent = pcts[n - 1];
+    document.getElementById('prog-fill').style.width = pcts[n - 1];
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function submitSurvey() {
+    // Collect all data into hidden Netlify form fields
+    const age = document.querySelector('input[name="age"]:checked');
+    const gender = document.querySelector('input[name="gender"]:checked');
+    const nationalityInputs = document.querySelectorAll('input[type="text"]');
+    
+    if (age) document.getElementById('nf-age').value = age.value;
+    if (gender) document.getElementById('nf-gender').value = gender.value;
+
+    // Nationality field (3rd text input in section 1)
+    const nationalityEl = document.querySelector('#sec-1 input[type="text"]:not(.lang-name)');
+    if (nationalityEl) document.getElementById('nf-nationality').value = nationalityEl.value;
+
+    // Language names and proficiency
+    const langNames = document.querySelectorAll('.lang-name');
+    langNames.forEach((el, i) => {
+      const nfLang = document.getElementById(`nf-lang${i}`);
+      const prof = document.querySelector(`input[name="prof${i}"]:checked`);
+      const nfProf = document.getElementById(`nf-prof${i}`);
+      if (nfLang) nfLang.value = el.value;
+      if (nfProf && prof) nfProf.value = prof.value;
+    });
+
+    // Settings
+    const settingInputs = document.querySelectorAll('.setting-row input[type="text"]');
+    const settingIds = ['nf-home','nf-university','nf-friends','nf-online'];
+    settingInputs.forEach((el, i) => {
+      const target = document.getElementById(settingIds[i]);
+      if (target) target.value = el.value;
+    });
+
+    // Likert scores (store each question's answer, comma-separated)
+    ['a','b','c','d','e'].forEach(s => {
+      const scores = [];
+      likertSets[s].forEach((_, i) => {
+        const checked = document.querySelector(`input[name="lk_${s}_${i}"]:checked`);
+        scores.push(checked ? checked.value : '');
+      });
+      document.getElementById(`nf-lk${s}`).value = scores.join(',');
+    });
+
+    // Open-ended questions
+    const textareas = document.querySelectorAll('#sec-4 textarea');
+    ['nf-oq1','nf-oq2','nf-oq3','nf-oq4'].forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el && textareas[i]) el.value = textareas[i].value;
+    });
+
+    // Submit hidden form to Netlify
+    document.getElementById('nf-submit-btn').click();
+
+    // Show thank you screen
+    document.querySelectorAll('.section-card').forEach(s => s.classList.remove('active'));
+    document.querySelector('.progress-bar-wrap').style.display = 'none';
+    document.getElementById('thank-you').style.display = 'block';
+
+    const langs = Array.from(document.querySelectorAll('.lang-name')).map(i => i.value).filter(v => v.trim());
+    let summary = '<strong>Your response summary</strong><br><br>';
+    if (age) summary += `Age: ${age.value}<br>`;
+    if (gender) summary += `Gender: ${gender.value}<br>`;
+    if (langs.length) summary += `Languages: ${langs.join(', ')}<br>`;
+
+    const labels = ['Attitudes – native language', 'Attitudes – other languages', 'Language prestige', 'Personal identity', 'Social identity'];
+    ['a','b','c','d','e'].forEach((s, idx) => {
+      let total = 0, count = 0;
+      likertSets[s].forEach((_, i) => {
+        const checked = document.querySelector(`input[name="lk_${s}_${i}"]:checked`);
+        if (checked) { total += parseInt(checked.value); count++; }
+      });
+      if (count > 0) summary += `${labels[idx]}: avg ${(total / count).toFixed(1)} / 5<br>`;
+    });
+
+    document.getElementById('summary-box').innerHTML = summary;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
